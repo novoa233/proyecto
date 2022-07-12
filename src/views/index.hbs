@@ -1,0 +1,255 @@
+
+
+  <section class=""  id="contenido">
+        <div class="row g-0">
+            <div class="col-lg-7 d-none d-lg-block">
+                <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+                    <ol class="carousel-indicators">
+                      <li data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"></li>
+                      <li data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"></li>
+                      <li data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"></li>
+                    </ol>
+                    <div class="carousel-inner ">
+                      <div class="carousel-item  img-1 min-vh-100 active">
+                        <div class="carousel-caption d-none d-md-block">
+                          <h5 class="font-weight-bold">Organiza tus ideas en cualquier lugar</h5>
+                          <a class="text-muted text-decoration-none">Acceso online desde donde estes</a>
+                        </div>
+                      </div>
+
+                      <div class="carousel-item  img-2 min-vh-100 active">
+                        <div class="carousel-caption d-none d-md-block">
+                          <h5 class="font-weight-bold">Define y visualiza tus metas</h5>
+                          <a class="text-muted text-decoration-none">Construye el guión de tu futuro</a>
+                        </div>
+                      </div>
+
+                      <div class="carousel-item img-3 min-vh-100">
+                        <div class="carousel-caption d-none d-md-block">
+                          <h5 class="font-weight-bold">Se el lider de tu equipo</h5>
+                          <a class="text-muted text-decoration-none">Coordinar un equipo colaborativo es la clave del éxito</a>
+                        </div>
+                      </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="sr-only">Next</span>
+                    </a>
+                  </div>
+            </div>
+            <div class="col-lg-5 d-flex flex-column align-items-end min-vh-100" id="loguearse">
+                 {{>errors}}
+                 {{>messages}}
+                <div class="px-lg-5 pt-lg-4 pb-lg-3 p-4 mb-auto w-100">
+                    <img src="img/logo.png" width="200px" class="img-fluid" />
+                </div>
+                <div class="align-self-center w-100 px-lg-5 py-lg-4 p-4">
+                <h1 class="font-weight-bold mb-4">Bienvenido de vuelta</h1>
+                <form class="mb-5" action="/validateuser" method="post">
+                    <div class="mb-4">
+                      <label for="login_email" class="form-label font-weight-bold">Email</label>
+                      <input type="email" class="form-control bg-dark-x border-0" id="login_email" placeholder="Ingresa tu email" aria-describedby="emailHelp" name="email" value="{{email}}">
+                    </div>
+                    <div class="mb-4">
+                      <label for="exampleInputPassword1" class="form-label font-weight-bold">Contraseña</label>
+                      <input type="password" name="password"class="form-control bg-dark-x border-0 mb-2" placeholder="Ingresa tu contraseña" id="exampleInputPassword1">
+                      <a href="" id="emailHelp" class="form-text text-muted text-decoration-none">¿Has olvidado tu contraseña?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+                  </form>
+
+                <p class="font-weight-bold text-center text-muted d-none">O inicia sesión con</p>
+                <div class="d-flex justify-content-around">
+                    <button type="button" class="btn btn-outline flex-grow-1 mr-2 d-none"><i class="fab fa-google lead mr-2"></i> Google</button>
+                    <button type="button" class="btn btn-outline flex-grow-1 ml-2 d-none"><i class="fab fa-facebook-f lead mr-2"></i> Facebook</button>
+                </div>
+                </div>
+                <div class="text-center px-5 pt-3 pb-4 mt-auto w-100">
+                     <p class="d-inline-block mb-0" >¿Todavia no tienes una cuenta?</p> <a href="#" id="register" class="font-weight-bold text-decoration-none">Crea una ahora</a>
+                </div>
+            </div>
+
+            {{!-- Formulario de registro --}}
+            <div class="col-lg-5 d-flex flex-column align-items-center d-none" id="formRegister">
+                {{>errors}}
+                 {{>messages}}
+              <div class="w-100 ">
+                <div class="px-5 pt-4 pb-3 mb-auto w-100">
+                    <img src="img/logo.png" width="200px" class="img-fluid" />
+                </div>
+                <div class="header">
+                  <h5 class="fs-1 text-center my-3 pb-3 pt-4"> Registrar una cuenta</h5> 
+                </div>
+                <div class="container w-75">
+                  <form action="/login" method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                      <div class="row ">
+                        <div class="col-6">
+                          <div class="form-group pb-3 my-2 d-flex flex-column align-items-center">
+                            <input type="text" class="form-control me-2 " name="nombre" placeholder="Nombre" required value="{{nombre}}">
+                            <input type="text" class="form-control me-2 my-2" name="apellido" placeholder="Apellido" value="{{apellido}}">
+                          </div>
+                        </div>
+                        <div class="col-6 d-flex">
+                          <div class="form-group my-2 ms-2">
+                    
+                              <div class="group">
+                                <img src="img/user.png" alt="" class="crop-image" id="crop-image">
+                                <input class="d-none"type="file"  id="input-file" accept=".png,.jpg,.jpeg" name="foto">
+                              
+                                <label for="input-file" class="label-file">imagen</label>
+                            </div>
+
+
+                          </div> 
+                      
+                        </div>
+                      </div>
+                      <div class="form-group d-flex pb-2">
+                        <input type="email" class="form-control" name="email" placeholder="Email" value="{{email}}" required>
+                      </div>
+                    
+                      <div class="form-group pb-2">
+                        <input type="password" class="form-control" name="password" placeholder="Password" value="{{password}}" required>
+                      </div>
+                      <div class="form-group pb-2">
+                        <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password" value="{{confirm_password}}" required>
+                      </div>
+                    <div class="text-center my-4">
+                      <button class="btn btn-primary btn-block w-100 ">Registrar</button>
+                    </div>
+                  </form>
+                  <a href="#" id="back_login" class="text-dark font-weight-bold text-decoration-none d-flex my-3"><span class="material-icons ">arrow_back</span><span class="mx-1">Iniciar sesión</span></a>
+                </div>
+              </div>
+            </div>
+        </div>
+      </section>
+
+ <!-- Modal para cortar imagen -->
+
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modal-content">
+            <div class="modal-header">
+                <p>Recorta tu foto</p>
+            </div>
+            <div class="modal-body">
+                <div class="content-imagen-cropper">
+                    <img src="" alt="" class="img-cropper" id="img-cropper">
+                </div>
+                <div class="content-imagen-sample">
+                    <div src="" alt="" class="img-sample" id="img-croppered"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" id="cut">Recortar</button>
+                <button class="btn secundary" id="close">Cancelar</button>
+            </div>
+        </div>
+    </div>
+     
+{{!-- <script>
+  // Esperamos a que todo el HTML esté cargado antes de ejecutar Javascrip
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Input File
+    const inputImage = document.querySelector('#image');
+    // Nodo donde estará el editor
+    const editor = document.querySelector('#editor');
+    // El canvas donde se mostrará la previa
+    const miCanvas = document.querySelector('#preview');
+    // Contexto del canvas
+    const contexto = miCanvas.getContext('2d');
+    // Ruta de la imagen seleccionada
+    let urlImage = undefined;
+    // Evento disparado cuando se adjunte una imagen
+    inputImage.addEventListener('change', abrirEditor, false);
+
+    /**
+    * Método que abre el editor con la imagen seleccionada
+    */
+    function abrirEditor(e) {
+        // Obtiene la imagen
+        urlImage = URL.createObjectURL(e.target.files[0]);
+
+        // Borra editor en caso que existiera una imagen previa
+        editor.innerHTML = '';
+        let cropprImg = document.createElement('img');
+        cropprImg.setAttribute('id', 'croppr');
+        editor.appendChild(cropprImg);
+
+        // Limpia la previa en caso que existiera algún elemento previo
+        contexto.clearRect(0, 0, miCanvas.width, miCanvas.height);
+
+        // Envia la imagen al editor para su recorte
+        document.querySelector('#croppr').setAttribute('src', urlImage);
+
+        // Crea el editor
+        new Croppr('#croppr', {
+            aspectRatio: 1,
+            startSize: [100, 100],
+            onCropEnd: recortarImagen
+        })
+    }
+
+    /**
+    * Método que recorta la imagen con las coordenadas proporcionadas con croppr.js
+    */
+    function recortarImagen(data) {
+        // Variables
+        const inicioX = data.x;
+        const inicioY = data.y;
+        // const nuevoAncho = 200;
+        // const nuevaAltura = 200;
+        const nuevoAncho = data.width;
+        const nuevaAltura = data.height;
+        const zoom = 1;
+        let imagenEn64 = '';
+        // La imprimo
+        miCanvas.width = nuevoAncho;
+        miCanvas.height = nuevaAltura;
+        // La declaro
+        let miNuevaImagenTemp = new Image();
+        // Cuando la imagen se carge se procederá al recorte
+        miNuevaImagenTemp.onload = function() {
+            // Se recorta
+            contexto.drawImage(miNuevaImagenTemp, inicioX, inicioY, nuevoAncho * zoom, nuevaAltura * zoom, 0, 0, nuevoAncho, nuevaAltura);
+            // Se transforma a base64
+            imagenEn64 = miCanvas.toDataURL("image/jpeg");
+            // Mostramos el código generado
+            document.querySelector('#base64').textContent = imagenEn64;
+            document.querySelector('#base64HTML').textContent = '<img src="' + imagenEn64.slice(0, 40) + '...">';
+
+        }
+        // Proporciona la imagen cruda, sin editarla por ahora
+        miNuevaImagenTemp.src = urlImage;
+        document.querySelector('#miImg').setAttribute('src', document.querySelector('#base64').textContent)
+    }
+});
+</script> --}}
+
+
+      
+      <script>
+       let logi= document.getElementById('loguearse')
+       let regi= document.getElementById('formRegister')
+       
+          document.getElementById('register').addEventListener('click',()=>{
+            document.getElementById('formRegister').classList.remove('d-none')
+            document.getElementById('loguearse').classList.add('d-none')
+          })
+          document.getElementById('back_login').addEventListener('click',()=>{
+
+            document.getElementById('formRegister').classList.add('d-none')
+            document.getElementById('loguearse').classList.remove('d-none')
+            
+    
+          })
+          
+
+
+      </script>

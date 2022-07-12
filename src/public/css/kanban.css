@@ -1,0 +1,236 @@
+body{
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 ;
+}
+:root {
+
+
+	--light: #F9F9F9;
+	--blue: #3C91E6;
+	--light-blue: #CFE8FF;
+	--grey: #eee;
+	--dark-grey: #AAAAAA;
+	--dark: #342E37;
+	--red: #DB504A;
+	--yellow: #FFCE26;
+	--light-yellow: #FFF2C6;
+	--orange: #FD7238;
+	--light-orange: #FFE0D3;
+	--green:rgb(54, 231, 54);
+	--modo:calc(100% - (25px - 4px) - 2px);
+}
+
+body.dark {
+	--light: #0C0C1E;
+	--grey: #060714;
+	--dark: #FBFBFB;
+}
+
+#kanban_app{
+    min-width: 100% !important;
+}
+.list{
+    width: 250px;
+    margin: 0 1.8rem 1rem 0 !important;
+    position: relative;
+    float: left;
+    background: #e2e4e6;
+    transition: all .3s cubic-bezier(.23,1,.32,1);
+    /* box-sizing: border-box; */
+    border-radius:14px;
+    padding-bottom: 1rem;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+
+.header-list{
+    font-size:16px;
+    padding:15px;
+   
+    box-sizing: border-box;
+    border-radius: 14px 14px 0 0;
+}
+
+.name-list{
+    color: white;
+    width: 150px;
+    display: inline-block;
+    padding: 0 0.5rem;
+    margin: 0;
+    font-weight: 700;
+}
+.red .name-list:hover{
+    background:#dd8ca7; /* colo atenuado*/
+}
+.green .name-list:hover{
+    background: #94e9c6;/* colo atenuado*/
+}
+.blue .name-list:hover{
+    background:#7dbef3;/* colo atenuado*/
+}
+.yellow .name-list:hover{
+    background:#e4df8b;/* colo atenuado*/
+}
+.list-name-button{
+    width: 120px;
+    height: 20px;
+    line-height: 15px;
+    color: #333;
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    bottom: 8px;
+    display: block;
+    font-weight: 700;
+    font-size: 0.80rem;
+    background-color: transparent;
+    box-shadow: none;
+    float:right;
+}
+
+.dropdown-trigger{
+    cursor: pointer;
+}
+.dropdown-menu li>a, .dropdown-menu li>span {
+    font-size: 12px;
+    /* line-height: 22px; */
+    display: block;
+    padding: 1px 0px;
+    color: #03a9f4;
+}
+
+/*dibujo de las barras para seleccionar el color de las listas*/
+.dropdown-item .barra_red{
+    width:40px;
+    height:13px;
+    background-color:#dd7396;
+}
+.dropdown-item .barra_blue{
+    width:40px;
+    height:13px;
+    background-color: #2196f3;
+}
+.dropdown-item .barra_green{
+    width:40px;
+    height:13px;
+    background-color:#16d686;
+}
+.dropdown-item .barra_yellow{
+    width:40px;
+    height:13px;
+    background-color: #fff459;
+}
+/**//**/
+
+.blue, .btn-color-blue{
+    background-color: #2196f3;
+}
+.green, .btn-color-green{
+    background-color: #16d686;
+}
+.red, .btn-color-red{
+    background-color: #dd7396;
+}
+.yellow, .btn-color-yellow{
+    background-color: #fff459;
+    color:black;
+}
+.text_blue{
+ color:#2196f3;
+}
+.text_red{
+ color:#dd7396;
+}
+.text_green{
+ color:#16d686;
+}
+.text_yellow{
+ color:#fff459;
+}
+/* .blue{
+    background-color: #2196f3;
+} */
+
+.list .list-panel{
+    min-height: 200px;
+    padding:10px; 
+}
+
+
+.btn_edit_project, .btn_delete_project{
+    cursor: pointer;
+}
+
+/*para Sortable*/
+
+#content_panel .list.selectDrag{
+    transform: scale(1.1) rotate(3deg);
+    box-shadow: rgb(5, 13, 129);
+    background:rgb(94, 93, 93);
+}
+#content_panel .list.fantasma{
+  
+    background:rgb(94, 93, 93);
+    opacity: .5;
+    border: 3px solid #370bf9;
+}
+#content_panel .list.drag{
+    border-radius: 50%;
+}
+
+#content_panel .list .header-list .handlemove{
+    cursor: move;
+}
+
+/**//**/
+
+/*para las cards de tareas*/
+.card .barra_task_red{
+    width:90%;
+    height:5px;
+    background-color:#dd7396;
+}
+
+.card .barra_task_blue{
+    width:90%;
+    height:5px;
+    background-color: #2196f3;
+}
+.card .barra_task_green{
+    width:90%;
+    height:5px;
+    background-color:#16d686;
+}
+.card .barra_task_yellow{
+    width:90%;
+    height:5px;
+    background-color: #fff459;
+}
+/**//**/
+/*para las fechsa dentro de las tareas*/
+.card-body .lighten-blue{
+    background-color:  #e8f5e9;
+    color:#4c8baf;
+}
+.card-body .lighten-red{
+    background-color:  #e8f5e9;
+    color:#af4c4c;
+}
+.card-body .lighten-green{
+    background-color:  #e8f5e9;
+    color:#4caf50;
+}
+.card-body .lighten-yellow{
+    background-color:  #e8f5e9;
+    color:#776e08;
+}
+
+/*PARA CONTACTOS EN VISTA DE CONTACTOS*/
+#panel_contactos {
+    background-color: var(--light);
+}
+
+#panel_contactos table th, td, tr {
+    color: var(--dark);
+}

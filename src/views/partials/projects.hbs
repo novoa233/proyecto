@@ -1,0 +1,618 @@
+<table class="table " id="table_projects">
+    <thead>   
+       <tr >
+            <th class="fs-6">#</th>
+            <th class="fs-6">Nombre</th>
+            <th class="fs-6">Fecha de inicio</th>
+            <th class="text-center fs-6">Descripción</th>
+            <th class="text-center fs-6">Prioridad</th>
+            <th class="text-center fs-6">Estado</th>
+		</tr>  
+    </thead>
+    <tbody class="table-group-divider">
+         {{#each projects}}
+        <tr  class="">
+            <td class="align-middle">{{inc @index}}</td>
+            <td id="nombre_{{this.id}}" onClick="entrar_proyecto('{{this.id}}','{{this.nombre}}')" class="align-middle">{{this.nombre}} </td>
+           
+            <td id="fecha_inicio_{{this.id}}" class="align-middle">{{fecha this.fecha_inicio}} </td>
+            <td id="descripcion_{{this.id}}"class="align-middle">{{ this.descripcion}}</td>
+            <td class="text-center align-middle" id="prioridad_{{this.id}}">{{ this.prioridad}}</td>
+            <td  class="text-center">
+                <div class="dropdown ">
+                    <button class="btn dropdown-toggle btn-estado status {{ class_projects this.estado}}" type="button" id="btn-estado_{{this.id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{this.estado}}
+                    </button>
+                    <ul class="dropdown-menu lista_estado" >
+                        <li><a class="dropdown-item" onclick='actualizar_estado("Pendiente", "{{this.id}}", "{{ class_projects this.estado}}" ,"pending")' href="#">Pendiente</a></li>
+                        <li><a class="dropdown-item" onclick='actualizar_estado("En proceso", "{{this.id}}", "{{ class_projects this.estado}}" ,"process")' href="#">En proceso</a></li>
+                        <li><a class="dropdown-item" onclick='actualizar_estado("Terminado", "{{this.id}}", "{{ class_projects this.estado}}" ,"completed")' href="#">Terminado</a></li>
+                    </ul>
+                </div>
+            </td>
+            <td class="btn_edit_project"onclick="edit_project('{{this.id}}', '{{this.nombre}}','{{this.fecha_inicio}}', '{{this.descripcion}}', '{{this.prioridad}}')">
+                <span class="material-icons-outlined" >edit</span></td>          
+            <td class="btn_delete_project" onclick="delete_project('{{this.id}}')">
+                <span class="material-icons-outlined">delete</span></td>
+        </tr>
+         {{else}}
+          <tr>
+            <th>sin nombre</th>
+            <th>sin fecha de inicio</th>
+            <th>sin Descripcion</th>
+            <th>sin prioridad</th>
+            <th>sin estado</th>
+        </tr>
+          {{/each}}
+    </tbody>
+</table>
+
+{{!-- kanban --}}
+
+<div class="container d-none" id="kanban_app">
+    <div class="row header my-1 mx-1 ">
+        <div class="d-flex flex-row-reverse">
+            <button class="btn btn-success my-0 p-1 mx-2"><span class="material-icons p-0 me-2">cloud_upload</span>Guardar trabajo</button>
+            <button class="btn btn-primary my-0 p-1" id="addPanel" onClick="addPanel2();">+ Agregar panel</button>
+        </div>
+    </div>
+    <div class="row" id="content_panel">       
+    </div>
+</div>
+
+{{!-- fin del kanban --}}
+
+
+
+{{!-- script del kanban --}}
+<script>
+//Sortable
+
+///funcion para el onEnd
+const PostDrag=()=>{
+    console.log('soy una funcion onEnd')
+}
+
+let contentPanel=document.getElementById("content_panel");
+
+Sortable.create(contentPanel,{
+    animation: 200,
+    easing: "cubic-bezier(0.895, 0.03, 0.685, 0.22)",
+    handle: ".handlemove",
+    chosenClass: "selectDrag",
+    ghostClass:"fantasma",
+    dragClass:"drag",
+    onEnd: PostDrag,
+    group: "listas",
+    store: {
+        set: (sortable)=>{
+            let nombreProyecto= document.getElementById("name_project").innerHTML.trim();
+            const order= sortable.toArray();
+            localStorage.setItem(`${nombreProyecto}_listas`, order.join('-'));
+        },
+        get: (sortable)=>{
+            let nombreProyecto= document.getElementById("name_project").innerHTML.trim();
+            const order= localStorage.getItem(`${nombreProyecto}_listas`);
+            return order?order.split('-'):[];           
+        }
+    }
+})
+
+//cargar y dibiujar listas desde la base de datos
+const listas=async(idp)=>{
+    const listasData= await fetch(`/${idp}/lists`);
+        const DATOS=await listasData.json();
+        let content_panel=document.getElementById('content_panel');
+        content_panel.innerHTML="";
+        let nom_proj=document.getElementById(`nombre_${idp}`).innerHTML.trim(); //para obtener el nombre del proyecto
+        const arr_list=[];
+        const listStorage= localStorage.getItem(`${nom_proj.trim()}_listas`).split('-').map(x=>parseInt(x));
+        if(DATOS.length>0){
+            DATOS.forEach((el, index)=>{
+                const tplPanel=`
+                <div class="list"  data-id=${index +1} id="${el.id}">
+                    <header class="header-list ${el.config.color}">
+                        <span class="material-icons-outlined handlemove d-inline-flex">drag_handle</span>
+                        <div class="name-list ${el.config.color} " id="list_title_${el.id}" onfocusout="save_name_list('${el.id}', '${el.projectId}')" contenteditable="true">${el.name}</div>
+                        <button class="list-name-button btn" id="btn_list_${el.id}" onClick="addTask('${el.id}');">+ Nueva tarea</button>
+                        <div class="dropdown d-inline me-auto">
+                            <button class="btn btn-color-${el.config.color} dropdown-toggle" type="button" data-bs-toggle="dropdown"></button>
+                            <ul class="dropdown-menu p-0" >
+                                <li class="task_new"><a class="dropdown-item" data-bs-toggle="offcanvas" href="#modal_new_tasks" role="button" d-flex align-items-center" onclick='addtask2("${el.id}")'><i class="small material-icons">add_circle</i><span>Nueva tarea</span></a></li >
+                                <li class="list_delete" onClick="delList('${el.id}','${el.projectId}')"><a class="dropdown-item  d-flex align-items-center"><span class="material-icons">delete_forever</span><span >Eliminar panel</span></a></li>
+                                <li onClick="changeColor('${el.id}','${el.projectId}','blue' )"><a class="dropdown-item d-flex align-items-center "><i class="small material-icons">brush</i><span class="ms-1 p-0">Azul </span> <div class="barra_blue ms-auto me-3"></div>  </a></li>
+                                <li onClick="changeColor('${el.id}','${el.projectId}','red' )"><a class="dropdown-item d-flex align-items-center"><i class="small material-icons">brush</i><span class="ms-1">Rojo </span><div class="barra_red ms-auto me-3"></div>  </a></li>
+                                <li onClick="changeColor('${el.id}','${el.projectId}','green' )"><a class="dropdown-item d-flex align-items-center"><i class="small material-icons">brush</i><span class="ms-1">Verde</span> <div class="barra_green ms-auto me-3"></div>    </a></li>
+                                <li onClick="changeColor('${el.id}','${el.projectId}','yellow' )"><a class="dropdown-item d-flex align-items-center"><i class="small material-icons">brush</i><span class="ms-1">Amarillo </span><div class="barra_yellow ms-auto me-3"></div>  </a></li>
+                            </ul>
+                        </div>
+                    </header>
+                    <div class="list-panel" id="list_${el.id}"></div>
+                </div>`;
+                arr_list[ listStorage[index]]=tplPanel; //parseInt(listStorage[index]) 
+            }) 
+            document.getElementById('n_lists').innerHTML=DATOS.length //para box-info
+
+        }else{
+            const tplPanel = `<div class="bg-info w-50 mx-auto"> <p> Aun no tienes listas creadas</p></div>`
+            content_panel.innerHTML=tplPanel+content_panel.innerHTML
+        };
+        arr_list.forEach((li, index)=>{
+            
+            if(li){
+                content_panel.innerHTML=content_panel.innerHTML+li
+            }
+        })
+   };
+
+//ejemplo de modelo de datos (sin uso)
+   var kanban_board_data = [
+    {
+        id: "1",
+        title: "TO DO",
+        headerBg: "blue",
+        item: [
+            {
+                id: "1_2",
+                title: "Express jupiter express for outer solar system to travel",
+                border: "green",
+                dueDate: "SEPTEMBER 9, 2019",
+                comment: 1,
+                attachment: 1,
+                users: ["../../../app-assets/images/avatar/avatar-10.png"],
+                image: "../../../app-assets/images/gallery/46.jpg",
+            }
+        ]
+    },
+    
+]
+
+//eliminar panel 
+const delList=async(id_panel, id_project)=>{
+     let nom_proj=document.getElementById(`nombre_${id_project}`).innerHTML.trim() //para obtener el nombre del proyecto
+    let data_id=parseInt(document.getElementById(id_panel).getAttribute("data-id"))
+    const payload={
+        id_panel
+    }
+    const solicitud=await fetch(`/${id_project}/lists`,{
+            method: "DELETE",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+            });
+    const result= await solicitud.json()
+
+    if(result){
+        console.log("result despues de borrar la lista",result)
+        let fil=localStorage.getItem(`${nom_proj}_listas`).split('-').map(x=>parseInt(x)).filter(y=>y!==data_id)
+        let fil2=fil.map(x=>parseInt(x)).filter(y=>y!==data_id)
+        console.log('fil=>', fil)
+        console.log('fil2=>', fil2)
+        localStorage.setItem(`${nom_proj}_listas`,fil.join('-'))
+    }else{
+        alert('error en el servisor al tratar de eliminar la lista')
+    };
+    console.log('delList-antes')
+    listas(id_project);  
+    console.log('delList-despues')
+};
+
+//agregar tarea (sin uso)
+const addTask=(id_panel)=>{
+    console.log('addtasks')
+let list=document.getElementById(`list_${id_panel}`)
+
+const tpl=` 
+<div class="card my-2 border border-top" > 
+<hr class="w-75 mx-auto my-0 border border-3 bg-${kanban_board_data[0].item[0].border} border-${kanban_board_data[0].item[0].border}">
+<div class="card-body">
+    <h5 class="card-title">${kanban_board_data[0].item[0].title}</h5>
+    <p class="card-text">Some quick example text to build ard's content.</p>
+    
+</div>
+</div> `
+
+list.innerHTML+=tpl        
+};
+
+//agregar tarea con offcanvas
+const addtask2=(idl)=>{
+    
+    let nom_list=document.getElementById(`list_title_${idl}`).innerHTML
+    document.getElementById('new_task_title').innerHTML=nom_list
+    document.getElementById('fecha_limite').value=moment().format('YYYY-MM-DD');
+    document.getElementById('select_color').selectedIndex =0;
+
+    let flatpickrInstance = flatpickr(
+        document.querySelector('#fecha_limite'),{
+            altInput: true,
+            dateFormat: "YYYY-MM-DD",
+            altFormat: "DD-MM-YYYY",
+            allowInput: true,
+            parseDate: (datestr, format) => {
+                return moment(datestr, format, true).toDate();
+            },
+            formatDate: (date, format, locale) => {
+            // locale can also be used
+            return moment(date).format(format);
+            }
+        }
+    );
+document.getElementById('btn_saveTask').setAttribute('onclick',`save_task('${idl}')`)
+
+};
+
+//Para guardar la tarea nueva desde el boton guardar del offcanvas
+const save_task=(idl)=>{
+    let list=document.getElementById(`list_${idl}`)//lista
+    let tarea=document.getElementById('tarea').value // tarea nueva
+    let fecha_limite=document.getElementById('fecha_limite').value // fecha limite
+    let title_task=document.getElementById('title_task').value
+    let select_color=document.getElementById('select_color').value //color de la tarea nueva
+//para genera id
+function uuidv4() {
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+  }
+let idv4=uuidv4()
+
+    const tpl=` 
+        <div class="card my-2 border border-top" id=${idv4} > 
+            <div class=" mx-auto my-0 barra_task_${select_color}"></div>
+            <div class="card-body">
+                <h5 class="card-title">${title_task}</h5>
+                <p class="card-text">${tarea}</p>
+                <div class="mx-auto mb-0 lighten-${select_color} w-75">
+                    <p class=" text-center fs-6">${moment(fecha_limite).format('MMM DD [,] YYYY')} </p>
+                </div>
+                <label id="progress_${idv4}"for="progreso" class="form-label fs-6">Progreso: 0 %</label>
+                <input type="range" class="form-range " min="0" max="10" step="0.5" id="progreso_${idv4}" value="0" onChange="update_progress('${idv4}');"> 
+            </div>
+        </div> `
+
+    let divPadre=document.createElement('div');
+    divPadre.className="card my-2 border border-top";
+    divPadre.id=`${idv4}`;
+    divPadre.setAttribute('property',`${idl}`)
+    let divH1=document.createElement('div');
+    divH1.className=`mx-auto my-0 barra_task_${select_color}`
+    let divH2=document.createElement('div')
+    divH2.className="card-body"
+    let h5=document.createElement('h5')
+    h5.className="card-title"
+    h5.innerHTML=`${title_task}`
+    let p1=document.createElement('p')
+    p1.className="card-text"
+    p1.innerHTML=`${tarea}`
+    let divH3=document.createElement('div')
+    divH3.className=`mx-auto mb-0 lighten-${select_color} w-75`
+    let p2=document.createElement('p')
+    p2.className="text-center fs-6"
+    p2.innerHTML=`${moment(fecha_limite).format('MMM DD [,] YYYY')}`
+    let lbl_progress=document.createElement('label')
+    lbl_progress.className="form-label fs-6"
+    lbl_progress.id=`progress_${idv4}`
+    lbl_progress.innerHTML="Progreso: 0 %"
+    let input_progress=document.createElement('input')
+    input_progress.className="form-range"
+    input_progress.setAttribute('type', 'range')
+    input_progress.setAttribute('min', '0')
+    input_progress.setAttribute('max', '10')
+    input_progress.setAttribute('step', '0.5')
+    input_progress.setAttribute('onChange', `update_progress('${idv4}')`)
+    input_progress.value='0'
+    input_progress.id=`progreso_${idv4}`
+
+    divH3.prepend(p2)
+    divH2.prepend(input_progress)
+    divH2.prepend(lbl_progress)
+    divH2.prepend(divH3)
+    divH2.prepend(p1)
+    divH2.prepend(h5)
+    divPadre.prepend(divH2)
+    divPadre.prepend(divH1)
+    list.appendChild(divPadre)
+
+    //limpiar offcanvas
+    document.getElementById('new_task_title').innerHTML='';
+    document.getElementById('title_task').value='';
+    document.getElementById('tarea').value='';
+    document.getElementById('fecha_limite').value=moment().format('YYYY-MM-DD');
+    document.getElementById('select_color').selectedIndex =0;
+
+
+    const payload={
+        
+    }
+
+}
+//actualizar la barra de progreso
+const update_progress=(idv4)=>{
+    let input=document.getElementById(`progreso_${idv4}`)
+    let lbl=document.getElementById(`progress_${idv4}`)
+    lbl.innerHTML=`Progreso: ${Number(input.value)*10} %`
+};
+
+
+//actualizar el estado de un proyecto
+const actualizar_estado=async(est, proj,rv_class, mk_class)=>{  
+   
+        let payload={
+            nombre: document.getElementById(`nombre_${proj}`).value,
+            fecha_inicio: document.getElementById(`fecha_inicio_${proj}`).value,
+            descripcion: document.getElementById(`descripcion_${proj}`).value,
+            prioridad: document.getElementById(`prioridad_${proj}`).value,
+            estado: est
+        }
+         await fetch(`/projects/${proj}`,{
+            method: "PUT",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+    let pj= document.getElementById( `btn-estado_${proj}`)
+    pj.classList.remove("pending")
+    pj.classList.remove("completed")
+    pj.classList.remove("process")
+   
+    if(est=="Pendiente"){
+        pj.classList.add(mk_class)  
+    }
+    if(est=="Terminado"){
+    pj.classList.add(mk_class)
+    }
+    if(est=="En proceso"){
+    pj.classList.add(mk_class)
+    }   
+    pj.innerHTML=est
+}
+
+//actualizar vista del slidebar
+const allSideMenu = document.querySelectorAll('#sidebar .side-menu.top li');
+allSideMenu.forEach(item=> {
+    item.classList.remove('active');
+});
+document.getElementById('projectsAll').classList.add('active');
+/////
+
+//para visualizar la ruta del proyecto seleccionado
+const entrar_proyecto=(id_proyecto, nombre)=>{
+
+    document.getElementById('addPanel').setAttribute('onClick',`addPanel2('${id_proyecto}')`)
+    document.getElementById('id_project').innerHTML=id_proyecto
+    let table_projects=document.getElementById('table_projects')
+    let kanban_app=document.getElementById('kanban_app')
+    let symbo= document.getElementById('symbo')
+    let name_project=document.getElementById('name_project')
+
+   listas(id_proyecto); //Crgar las listas desde la base de datos
+
+    name_project.innerHTML=nombre;
+    symbo.classList.remove('d-none');
+    name_project.classList.remove('d-none')
+    table_projects.classList.add('d-none')
+    kanban_app.classList.remove('d-none')
+
+};
+
+// crear lista addPanel
+/*
+const addPanel=async (idp)=>{
+    
+    const tpl=`
+    <div class="container my-2">
+        <div class="row">
+            <div class="col-12 col-md-6 mx-auto">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="nombre">Nombre</span>
+                    <input type="text" class="form-control" id="name_newlist" onKeyUp="nomList(event.target.value);" name="nombre" >
+                </div>
+                
+                <div class="input-group mb-3 my-1">
+                    <label class="input-group-text" for="color_list">Color</label>
+                    <select class="form-select" onChange="changeClass(event.target.value);" id="color_list">
+                        <option selected>...</option>
+                        <option value="blue">Azul</option>
+                        <option value="green">Verde</option>
+                        <option value="red">Rojo</option>
+                        <option value="yellow">Amarillo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 ">
+                <div class="list ">
+                    <header class="header-list d-flex align-items-center justify-content-center" id="prev_header">
+                        <div class="name-list" id="prev_name_list">nombre lista</div>
+                        <button class="list-name-button btn"></button>
+                    </header>
+                    <div class="list-panel"></div>
+                </div>
+            </div>
+        </div>       
+    </div>`
+    const { value: formValues } = await Swal.fire({
+  	    title: 'Crear nueva lista',
+  	    html: tpl,
+	    width: '60%',
+  	    focusConfirm: false,
+  	    preConfirm: () => {		
+
+    	    return 'Creado !'
+  	    }
+    });
+
+    if (formValues) {
+        let payload={
+        name: document.getElementById('name_newlist').value,
+        config: {
+            color: document.getElementById('color_list').value,
+            colorText: document.getElementById('color_list').value
+            }		
+        }
+
+        console.log(payload)
+        const save_list=await fetch(`/${idp}/lists`,{
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+        const result=await save_list
+        const data=await result.json()
+	
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Su lista ha sido creada',
+            showConfirmButton: false,
+            timer: 1500
+            })
+            }else {
+                Swal.fire({
+                    title:'Cancelado !',
+                    icon: 'error'
+                    })
+            };
+
+
+    listas(idp);
+}
+*/
+const addPanel2=async (idp)=>{
+    let nom_proj=document.getElementById(`nombre_${idp}`).innerHTML.trim() //para obtener el nombre del proyecto
+    let colores=["blue", "green", "red", "yellow"]
+    let _listas;
+    let order;
+    let colorheader=colores[Math.floor(Math.random()*colores.length)]
+
+    if(document.querySelector('.list')==null){
+        order="1"
+    }else{
+        _listas=document.querySelectorAll('.list')
+        order=parseInt(_listas[_listas.length-1].getAttribute("data-id"))+1
+    }
+
+    let payload={
+        name: 'Nueva lista',
+        config: {
+            color: colorheader,
+            colorText: colorheader,
+            order: order
+        }		
+    };
+
+    const save_list=await fetch(`/${idp}/lists`,{
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
+    const result=await save_list
+    const data=await result.json()
+    if(data){
+        if(!localStorage.getItem(`${nom_proj}_listas`)){
+            localStorage.setItem(`${nom_proj}_listas`, "1"),
+            console.log('Se creo el localStorage '+ nom_proj)
+        }else{
+            let storageorder=localStorage.getItem(`${nom_proj}_listas`).split('-').map(x=>parseInt(x))
+            let newlist=Math.max(...storageorder)+1;
+            localStorage.setItem(`${nom_proj}_listas`,`${localStorage.getItem(nom_proj+'_listas')}-${newlist}`);
+            console.log('Ya existía el localStorage '+ nom_proj)
+        };
+    };
+    listas(idp);
+}
+//Para cambiar el color al momento de crear un panel (lista)*quizas no se use
+const changeClass=(color)=>{
+    let campo=document.getElementById('name_newlist').value
+    let seleccionado=document.getElementById('prev_header')
+    let prev_name_list=document.getElementById('prev_name_list')
+    prev_name_list.classList.remove('blue') 
+    prev_name_list.classList.remove('green')
+    prev_name_list.classList.remove('yellow')
+    prev_name_list.classList.remove('red')
+    prev_name_list.classList.remove('...')
+    prev_name_list.classList.add(color)
+    seleccionado.classList.remove('blue') 
+    seleccionado.classList.remove('green')
+    seleccionado.classList.remove('yellow')
+    seleccionado.classList.remove('red')
+    seleccionado.classList.remove('...')
+    seleccionado.classList.add(color)
+};
+//PAra actualizar el nombre de la lista que se está creando (lista)*quizas no se use
+const nomList=(e)=>{
+    let prev_title="";
+    if(e !==""){
+        prev_title=e;
+    }else{
+        prev_title="nombre de lista";
+    };
+    document.getElementById('prev_name_list').innerHTML=prev_title;
+};
+
+//guardar el nombre
+const save_name_list=async (idl, idp)=>{
+    let elem=document.getElementById(`list_title_${idl}`)
+    let elemenOrder=document.getElementById(idl)
+    let color=elem.className.split(" ")[1];
+    if(elem.innerHTML==""){
+        Swal.fire({
+            icon: 'error',
+            title: 'Lista sin nombre',
+            text: 'No puede dejar la lista sin nombre. Escriba un nombre para la lista en su cabecera',            
+        })
+    return elem.innerHTML="Escriba acá un nombre"
+    };
+    const payload={
+        name: elem.innerHTML.trim(),
+        config: {
+            color: color,
+            colorText:color,
+            order: elemenOrder.getAttribute("data-id")
+        }
+    };
+
+    const changeName=await fetch(`/lista/${idl}`,{
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+    const result=await changeName.json();
+    listas(idp);
+};
+//actualizar al cambiar el color de una lista
+const changeColor=async(idl, idp, color)=>{
+    let container= document.getElementsByClassName('list');
+    let elemenOrder=document.getElementById(idl);
+
+    let elem=document.getElementById(`list_title_${idl}`)
+
+    const payload={
+        name: elem.innerHTML,
+        config: {
+            color: color,
+            colorText:color,
+            order: elemenOrder.getAttribute("data-id")
+        }
+    };
+
+    const changeName=await fetch(`/lista/${idl}`,{
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
+    const result=await changeName.json();
+    listas(idp);
+};
+
+</script>

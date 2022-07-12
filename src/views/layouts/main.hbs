@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+
+	<!-- bootstrap -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+	<!--Google font-->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+	
+<!--MATERIAL icons-->
+<!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ 
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
+  
+	<!--flatpicker-->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+		<!-- My CSS -->
+	<link rel="stylesheet"  type="text/css" href="/css/style_principal.css">
+	<link rel="stylesheet" type="text/css" href="css/kanban.css">
+	<link rel="stylesheet" type="text/css" href="css/cropper.css">
+	<link rel="stylesheet" type="text/css" href="css/index_crop.css">
+
+	<!--Font Awesome-->
+	 <script src="https://kit.fontawesome.com/ffec4ec2ed.js" crossorigin="anonymous"></script>
+	
+		<!-- Latest Sortable -->
+<script src="http://SortableJS.github.io/Sortable/Sortable.js"></script>
+
+<!--Croppr.js--->
+  <link href="https://cdn.jsdelivr.net/gh/jamesssooi/Croppr.js@2.3.0/dist/croppr.min.css" rel="stylesheet"/>
+
+
+
+	<title>DoAll</title>
+</head>
+<body class="{{>mode}}">
+	<!-- CONTENT -->
+{{{body}}}
+
+
+<!--modal newTasks-->
+ <div class="offcanvas offcanvas-end d-flex" tabindex="-2" id="modal_new_tasks" >
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="new_task_title">titulo de la tarea</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+       		<div class="input-group mb-3">
+				<span class="input-group-text" id="title-task">Tìtulo</span>
+				<input type="text" class="form-control" placeholder="Tìtulo" id="title_task">
+			</div>
+			
+			<div class="form-floating">
+  				<textarea id="tarea"class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+  				<label for="floatingTextarea2">Tarea</label>
+			</div>
+		
+			<div class="fecha_limite my-3">
+				<label class="p-2" for="fecha_limite">Fecha límite</label>
+				<input  type="text" id="fecha_limite" ></input>
+			</div>
+
+			<div class="row">
+			<div class="col-12 col-md-6 my-3">
+				<label for="select_color">Color</label>
+				<select class="form-select my-3" id="select_color"aria-label="Default select example">
+					<option value="blue">Azul</option>
+					<option value="red">Rojo</option>
+					<option value="green">Verde</option>
+					<option value="yellow">Amarillo</option>
+				</select>
+			</div>
+			<div class="col-12 col-md-6 my-3 mx-auto">
+				<span class="d-inline-flex"> Asignación </span>
+				
+				<span class="material-icons-outlined d-flex justify-content-end ">add_circle</span>
+				<div class="d-flex">
+					<div class="avatar d-inline-flex">
+						<img class="rounded-circle" src="img/imgProfile.png" width="36"  height="36"alt="avatar">
+					</div>
+					
+					
+					
+				</div>
+
+			</div>
+			</div>
+    
+
+		</div>
+		<div class="d-flex justify-content-center my-5">
+		
+			<button id="btn_saveTask"type="button" class=" btn btn-primary mx-3 rounded-pill" data-bs-dismiss="offcanvas">Guardar</button>
+			<button type="button" class=" btn btn-warning mx-3 rounded-pill" data-bs-dismiss="offcanvas" >Eliminar</button>
+		</div>
+
+
+      </div>  
+
+
+<!--Calendario modal-->
+<div id='calendar'></div>
+<!--proximamente--->
+
+<!------------------------>
+
+
+    	
+	<!-- bootstrap -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
+
+	{{!-- sweetAlert2 --}}
+
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!--moment-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.js" integrity="sha512-VnJVXpOlJZ9qp7za6z7yzGvoNSIzHpeLfGlg7LoAqiMSkglhSUDJrxeUmKBPH1LtPlcypv6NnNO4Bbx8fkBD+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!--flatpicker--->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!--Cropper--->
+ <script src="https://cdn.jsdelivr.net/gh/jamesssooi/Croppr.js@2.3.0/dist/croppr.min.js"></script>
+
+<!--mi script-->
+	<script src="js/script.js"></script>
+	<script src="js/libs/cropper.js"></script>
+	<script src="js/crop_cropper.js"></script>
+		<!--calculadora-->
+	<script src="js/calculadora/Calculator.js"></script>
+    <script src="js/calculadora/Display.js"></script>
+    <script src="js/calculadora/index.js" ></script>
+
+</body>
+</html>

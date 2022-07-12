@@ -1,0 +1,50 @@
+<nav>
+    <i class='bx bx-menu' ></i>
+    <a href="#" class="nav-link">Categories</a>
+    <form action="#">
+        <div class="form-input">
+            <input type="search" placeholder="Search...">
+            <button type="submit" class="search-btn  bg-warning"><i class='bx bx-search' ></i></button>
+        </div>
+    </form>
+    <span class="d-none" id="midunique"></span>
+    <div class="d-flex-column" >
+        <span class=" text-weather"id="text_zona_horaria">Zona horaria</span><br>
+        <span class=" text-weather" id="text_clima">soleado</span><br>
+        <span class=" text-weather" id="text_temperatura">temperatura actual</span><br>
+
+    </div>
+    <div class="me-auto">
+        <img id="icon_weather"src="" alt="..." width="100px" height="100px">
+
+    </div>
+    <span>{{>user}}</span>
+    <input type="checkbox" id="switch-mode" hidden>
+    <label for="switch-mode"  data-content="" class="switch-mode"></label>
+    <a href="#" class="notification">
+        <i class='bx bxs-bell' ></i>
+        <span class="num">8</span>
+    </a>
+    <a href="#" class="profile">
+        <img src="img/imgProfile.png" id>
+    </a>
+</nav>
+<script>
+const mode =document.querySelector('#switch-mode')
+    if(document.querySelector('body').className=="dark"){
+         mode.setAttribute('checked', true )
+         console.log('detectado modo dark. Se activó el check (true)')
+    }
+    mode.addEventListener("click",async()=>{
+
+       const mode= await fetch(`/saveconfigmode`,{
+            method: "PUT",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify({modo:'cambiado'})
+        })
+        res= await mode.json()
+        console.log(res)
+    })
+</script>

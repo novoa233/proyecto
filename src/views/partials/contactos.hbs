@@ -1,0 +1,120 @@
+<div class="card mx-auto" style="width: 80%;" id="panel_contactos">
+
+  <table class="table">
+  <thead class="card-header">
+    <tr>
+      <th >#</th>
+      <th></th>
+      <th >Nombre</th>
+      <th >Email</th>
+      <th >Teléfono</th>
+       <th >Empleo</th>
+      <th >Nota</th>
+      <th >Editar</th>
+      <th >Eliminar</th>
+    </tr>
+  </thead>
+  <tbody>
+     {{#each contacts}}
+    <tr>
+      <td>{{inc @index}}</td>
+      <td> <img  id="contact_img_{{this.id}}" class="border border-success rounded-circle"src="img/contacts/{{this.foto}}" width="36" height="36" alt=".."> </td>
+      <td id="contact_nombre_{{this.id}}">{{this.nombre}} {{this.apellido}}</td>
+      <td id="contact_email_{{this.id}}">{{this.email}}</td>
+      <td id="contact_telefono_{{this.id}}">{{this.telefono}} </td>
+      <td id="contact_empleo_{{this.id}}">{{this.config.empleo}} </td>
+      <td id="contact_nota_{{this.id}}">{{this.nota}} </td>
+      <td class="mx-auto" onclick="edit_contact('{{this.id}}', '{{this.nombre}}', '{{this.apellido}}', '{{this.email}}', '{{this.telefono}}', '{{this.config.empleo}}', '{{this.nota}}', '{{this.foto}}')">
+        <a href=""data-bs-toggle="offcanvas" data-bs-target="#edit_contacts" aria-controls="offcanvasExample">
+        <span class="material-icons-outlined" >edit</span> </a></td>
+      <td class="mx-auto"><span class="material-icons-outlined">delete_outline</span></td>
+    </tr>
+      {{else}}
+    <tr class="text-center">
+      <td class="fs-3 border "colspan="9">Sin contactos asociados</td>
+    
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+</div>
+
+
+	<!--MODAL editar contacto--->
+			<div class="offcanvas offcanvas-end" tabindex="-1" id="edit_contacts" aria-labelledby="offcanvasExampleLabel">
+  				<div class="offcanvas-header">
+    				<h4 class="offcanvas-title mx-auto mb-0 pt-1" id="offcanvasExampleLabel">Editar contacto</h4>					
+    				<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  				</div>
+					<hr class="w-100">
+  				<div class="offcanvas-body my-0 ">
+					<form action="/contactos" method="PUT" enctype="multipart/form-data">
+						<input class="d-none" type="text" id="id_contactEdit" name="id_contactEdit">
+							<div class="form-group mb-1 d-flex">
+								<span class="material-icons me-3 pe-2 d-flex align-items-center" style="font-size:36px; color:#00bcd4;" >add_a_photo</span>							
+								<div class="group me-auto ">
+									<img src="img/user.png" alt="contact" class="crop-image" data-id="img_edit_contact" id="crop-image">
+									<input class="d-none"type="file" data-id="input_edit_contact" id="input-file" accept=".png,.jpg,.jpeg" name="foto">                              
+									<label for="input-file" class="form-label label-file">imagen</label>
+								</div>
+							</div>
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >person</span>
+								<input type="text" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Nombre" id="name_edit_contact" name="name_edit_contact" required>
+							</div>
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >person</span>
+								<input type="text" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Apellido" id="lastName_edit_contact" name="last_name_edit_contact" required>
+							</div>
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >email</span>
+								<input type="email" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Email" id="email_edit_contact" name="email_edit_contact" required>
+							</div>					
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >phone</span>
+								<input type="text" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Teléfono" id="phone_edit_contact" name="phone_edit_contact">
+							</div>
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >work</span>
+								<input type="text" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Profesión" id="job_edit_contact" name="job_edit_contact">
+							</div>
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >note</span>
+								<input type="text" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Nota" id="note_edit_contact" name="note_edit_contact">
+							</div>												
+						
+						<div class="pt-3">
+							<div class="d-flex  justify-content-evenly pt-1">
+								<button type="submit" class="btn form-control" id="btn-edit-contact" data-bs-dismiss="offcanvas" >Guardar</button>
+							
+
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!--fin modal-->
+
+<script>
+
+const allSideMenu = document.querySelectorAll('#sidebar .side-menu.top li');
+allSideMenu.forEach(item=> {
+    item.classList.remove('active');
+})
+
+    document.getElementById('contactos').classList.add('active');
+
+const edit_contact=async(idc, nombre, apellido, email, telefono, empleo, nota, foto)=>{
+  document.getElementById('id_contactEdit').value=idc
+  document.getElementById('crop-image').src=`img/contacts/${foto}`;
+  document.getElementById("input-file").value=""
+  document.getElementById("name_edit_contact").value=nombre
+  document.getElementById("lastName_edit_contact").value=apellido
+  document.getElementById("email_edit_contact").value=email
+  document.getElementById("phone_edit_contact").value=telefono
+  document.getElementById("job_edit_contact").value=empleo
+  document.getElementById("note_edit_contact").value=nota
+
+
+}    
+</script>

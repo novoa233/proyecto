@@ -1,0 +1,158 @@
+
+	{{>sidebar}}
+
+	<section id="content">
+		<!-- NAVBAR -->
+		{{>navbar}}
+		<!-- NAVBAR -->
+
+		<!-- MAIN -->
+		<main>
+	
+			{{>box-info}}
+			<div class="table-data">
+				<div class="order">
+					<div class="head">
+						<h3>Contactos</h3>
+					
+						<a class=" btn btn-light px-2 ms-auto" id="btn-newContact" onclick="ajustar_id_crop('input_new_contact')" data-bs-toggle="offcanvas" data-bs-target="#add_new_contact" aria-controls="offcanvasExample">
+							<span class="material-symbols-outlined">add</span>
+						</a>
+					</div>
+					
+
+                {{> contactos}}
+				</div>
+			
+			</div>
+
+			<!--MODAL Nuevo contacto--->
+			<div class="offcanvas offcanvas-end" tabindex="-1" id="add_new_contact" aria-labelledby="offcanvasExampleLabel">
+  				<div class="offcanvas-header">
+    				<h4 class="offcanvas-title mx-auto mb-0 pt-1" id="offcanvasExampleLabel">Crear nuevo contacto</h4>					
+    				<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  				</div>
+					<hr class="w-100">
+  				<div class="offcanvas-body my-0 ">
+					<form action="/contactos" method="POST" enctype="multipart/form-data">
+						
+							<div class="form-group mb-1 d-flex">
+								<span class="material-icons me-3 pe-2 d-flex align-items-center" style="font-size:36px; color:#00bcd4;" >add_a_photo</span>							
+								<div class="group me-auto ">
+									<img src="img/user.png" alt="contact" class="crop-image" id="crop-image" data-id="img_new_contact">
+									<input class="d-none"type="file" data-id="input_new_contact" id="input-file" accept=".png,.jpg,.jpeg" name="foto">                              
+									<label for="input-file" class="form-label label-file">imagen</label>
+								</div>
+							</div>
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >person</span>
+								<input type="text" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Nombre" id="name_new_contact" name="name_new_contact" required>
+							</div>
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >person</span>
+								<input type="text" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Apellido" id="lastName_new_contact" name="last_name_new_contact" required>
+							</div>
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >email</span>
+								<input type="email" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Email" id="email_new_contact" name="email_new_contact" required>
+							</div>					
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >phone</span>
+								<input type="text" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Teléfono" id="phone_new_contact" name="phone_new_contact">
+							</div>
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >work</span>
+								<input type="text" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Profesión" id="job_new_contact" name="job_new_contact">
+							</div>
+							<div class="form-group mb-1">
+								<span class="material-icons me-3" style="font-size:36px; color:#00bcd4;" >note</span>
+								<input type="text" class="form-control border border-top-0 border-end-0 border-start-0 border-info" placeholder="Nota" id="note_new_contact" name="note_new_contact">
+							</div>												
+						
+						<div class="pt-3">
+							<div class="d-flex  justify-content-evenly pt-1">
+								<button type="submit" class="btn form-control" id="btn-save-contact" data-bs-dismiss="offcanvas" >Guardar</button>
+							
+
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</main>
+
+
+		<!-- Modal para cortar imagen -->
+
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modal-content">
+            <div class="modal-header">
+                <p>Recorta tu foto</p>
+            </div>
+            <div class="modal-body">
+                <div class="content-imagen-cropper">
+                    <img src="" alt="" class="img-cropper" id="img-cropper">
+                </div>
+                <div class="content-imagen-sample">
+                    <div src="" alt="" class="img-sample" id="img-croppered"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" id="cut" >Recortar</button>
+                <button class="btn secundary" id="close">Cancelar</button>
+            </div>
+        </div>
+    </div>
+		<!-- MAIN -->
+{{!-- 
+<script>
+const save_new_contact=async()=>{
+	let id_user=document.getElementById("midunique").textContent
+	console.log('id_user==>',id_user)
+
+	let nombre=document.getElementById("name_new_contact")
+	let apellido=document.getElementById("lastName_new_contact")
+	let email=document.getElementById("email_new_contact")
+	let telefono=document.getElementById("phone_new_contact")
+	let profesion=document.getElementById("job_new_contact")
+	let nota=document.getElementById("note_new_contact")
+	let foto=document.getElementById("input-file")
+
+	if(!nombre.value || !apellido.value || !email.value ) return alert('debe ingresar por lo menos nombre, apellido y correo')
+
+	console.log('foto=>',foto.vale)
+	const payload={
+		nombre: nombre.value,
+		apellido: apellido.value,
+		email: email.value,
+		telefono: telefono.value,
+		profesion: profesion.value,
+		nota: nota.value,
+		foto: foto.value
+	}
+console.log('payload==>', payload)
+
+await fetch(`/contact/${id_user}`,{
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(payload)
+		});
+		const result=await save_post
+		const data=await result.json()
+		console.log(data) 	
+
+};
+</script> --}}
+<script>
+	document.querySelectorAll('input').forEach(el=>{
+		el.value=""
+	})
+
+const ajustar_id_crop=(nuevo)=>{
+let document.
+}
+
+
+</script>
